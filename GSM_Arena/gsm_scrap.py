@@ -7,7 +7,7 @@ import csv
 def function3(link4):
 	'''scrap all the phone attribute from the page ie http://www.gsmarena.com/apple_ipad_air-5797.php
 	 and add it to the database '''
-	
+	print(link4)
 	data3 = requests.get(link4)
 	soup5 = BeautifulSoup(data3.text, "lxml")
 	soup6 = BeautifulSoup(str(soup5.findAll("div", { "id" : "specs-list" })),"lxml")
@@ -59,7 +59,7 @@ def function3(link4):
 	    elif('OS' in attr):
 	        #version=OS(val.encode('ascii','ignore').decode('utf-8'))
 	        version =val
-	        print(val)
+	        #print(val)
 	    elif('Sensor' in attr):
 	        sensors=val
 	    elif('Primary' in attr):
@@ -100,28 +100,32 @@ def function3(link4):
 	        val=val.split(' ')
 	        non_removable_battery='Yes' if('Non' in val[0]) else 'No'
 	        battery_type=val[1]
-	        battery_capacity=val[2]
+	        if len(val) > 2:
+	        	battery_capacity=val[2]
 	    elif('Card slot' in attr):
-	    	print(mem)
-	        #expandable_memory=mem[0][:-2]
+	    	if(len(mem) != 0):
+	        	expandable_memory=mem[0][:-2]
 	    elif('Internal' in attr):
-	        ram_memory=mem[1][:-3]
-	        internal_memory=mem[0][:-3]
+	        if(len(mem) > 1):
+	        	ram_memory=mem[1][:-3]
+	        	internal_memory=mem[0][:-3]
+	        elif(len(mem) == 1):
+	        	internal_memory=mem[0][:-3]
 	    elif('GPU' in attr):
 	        gpu=val
 	    elif('Chipset' in attr):
 	        processor_type=val
 	    elif('CPU' in attr):
-	        cp=re.search('[0-9.]* GHz',val)
-	        processor_frequency=cp.group(0)[:-4]
-	        no_of_cores=val.split(' ')[0]
-	lis=['display_resolution','version','sensors','flash_type','auto_focus','aperture','primary_camera_resolution','primary_camera_features','FM','wifi_type','bluetooth_type','weight','display_type','screen_protection','available_colors','usb_type','screen_size','sim_type','non_removable_battery','battery_type','battery_capacity','expandable_memory','ram_memory','internal_memory','processor_frequency','processor_type','gpu','no_of_cores']
-	lis_data=[display_resolution,version,sensors,flash_type,auto_focus,aperture,primary_camera_resolution,primary_camera_features,FM,wifi_type,bluetooth_type,weight,display_type,screen_protection,available_colors,usb_type,screen_size,sim_type,non_removable_battery,battery_type,battery_capacity,expandable_memory,ram_memory,internal_memory,processor_frequency,processor_type,gpu,no_of_cores]
+	    	cpu = val
+	    	#processor_frequency=cp.group(0)[:-4]
+	        #no_of_cores=val.split(' ')[0]
+	lis=['Link','display_resolution','version','sensors','flash_type','auto_focus','aperture','primary_camera_resolution','primary_camera_features','FM','wifi_type','bluetooth_type','weight','display_type','screen_protection','available_colors','usb_type','screen_size','sim_type','non_removable_battery','battery_type','battery_capacity','expandable_memory','ram_memory','internal_memory','processor_type','gpu','cpu']
+	lis_data=[link4,display_resolution,version,sensors,flash_type,auto_focus,aperture,primary_camera_resolution,primary_camera_features,FM,wifi_type,bluetooth_type,weight,display_type,screen_protection,available_colors,usb_type,screen_size,sim_type,non_removable_battery,battery_type,battery_capacity,expandable_memory,ram_memory,internal_memory,processor_type,gpu,cpu]
 	#sheet = pe.get_sheet(file_name="gsm_data.xlsx")
 	#sheet.row += lis
 	#sheet.row +=lis_data
 	#sheet.save_as("gsm_data.xlsx")
-	print(display_resolution,version,sensors)
+	#print(display_resolution,version,sensors)
 	myData = [lis_data]
 	myFile = open('Phones.csv', 'a', newline='')
 	with myFile:
@@ -133,14 +137,15 @@ def function1(link3):
 	It will extract all the navigation link present on the bottom of the page'''
 	data2 = requests.get(link3)
 	soup3 = BeautifulSoup(data2.text, "lxml")
-	soup4= BeautifulSoup(str(soup3.div(class_="nav-pages")), "lxml")
+	soup4= BeautifulSoup(str(soup3.findAll("div", { "class" : "nav-pages" })),"lxml")
+	print(soup4)
 	if soup4.get_text() == '[]': #some pages have no navigation pages thats why if is used
-		#print("NoNav")
-		#print (link3)
+		print("NoNav")
+		print (link3)
 		function2(link3)
 		#print ("-------------------No1--------------------------")
 	else:
-		#print("Nav")
+		print("Nav")
 		#print (link3)
 		function2(link3)
 		link1=  "http://www.gsmarena.com/"+ soup4.a['href']
@@ -183,8 +188,9 @@ def check_in_csv(link):
 	with open('links.csv', 'r') as f:
 		reader = csv.reader(f, delimiter=',')
 		for row in reader:
-         	 if link == row[0]:
-         	 	return 1
+			if len(row) > 0:
+				if link == row[0]:
+					return 1
 	return 0
 
 link = "http://www.gsmarena.com/makers.php3" #start link to scrap gsm contains all the phone maker company
@@ -194,7 +200,7 @@ soup = BeautifulSoup(data.text, "lxml")
 myFile = open('links.csv', 'a', newline='')
 soup2= BeautifulSoup(str(soup.findAll("div", { "class" : "st-text" })),"lxml")
 lis = soup2.find_all('a')
-#print(lis)
+
 for i in range(0,len(lis),2):
 	link2 = "http://www.gsmarena.com/"+ lis[i]['href']
 	function1(link2)
