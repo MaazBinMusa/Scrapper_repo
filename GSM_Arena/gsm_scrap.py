@@ -43,6 +43,8 @@ def function3(link4):
 	processor_type= "NULL"
 	gpu= "NULL"
 	no_of_cores= "NULL"
+	cpu = "NULL"
+	price = "NULL"
 	def OS(text):
 	    ios=re.search('ios[a-z0-9-._]*',text)
 	    ver=re.search('v[0-9.]*',text)
@@ -113,14 +115,17 @@ def function3(link4):
 	        	internal_memory=mem[0][:-3]
 	    elif('GPU' in attr):
 	        gpu=val
+	    elif('Price' in attr):
+	    	price = val
+	    	print(price)
 	    elif('Chipset' in attr):
 	        processor_type=val
 	    elif('CPU' in attr):
 	    	cpu = val
 	    	#processor_frequency=cp.group(0)[:-4]
 	        #no_of_cores=val.split(' ')[0]
-	lis=['Link','display_resolution','version','sensors','flash_type','auto_focus','aperture','primary_camera_resolution','primary_camera_features','FM','wifi_type','bluetooth_type','weight','display_type','screen_protection','available_colors','usb_type','screen_size','sim_type','non_removable_battery','battery_type','battery_capacity','expandable_memory','ram_memory','internal_memory','processor_type','gpu','cpu']
-	lis_data=[link4,display_resolution,version,sensors,flash_type,auto_focus,aperture,primary_camera_resolution,primary_camera_features,FM,wifi_type,bluetooth_type,weight,display_type,screen_protection,available_colors,usb_type,screen_size,sim_type,non_removable_battery,battery_type,battery_capacity,expandable_memory,ram_memory,internal_memory,processor_type,gpu,cpu]
+	lis=['Link','price','display_resolution','version','sensors','flash_type','auto_focus','aperture','primary_camera_resolution','primary_camera_features','non_removable_battery','battery_type','battery_capacity','expandable_memory','ram_memory','internal_memory','processor_type','gpu','cpu']
+	lis_data=[link4,price,display_resolution,version,sensors,flash_type,auto_focus,aperture,primary_camera_resolution,primary_camera_features,non_removable_battery,battery_type,battery_capacity,expandable_memory,ram_memory,internal_memory,processor_type,gpu,cpu]
 	#sheet = pe.get_sheet(file_name="gsm_data.xlsx")
 	#sheet.row += lis
 	#sheet.row +=lis_data
